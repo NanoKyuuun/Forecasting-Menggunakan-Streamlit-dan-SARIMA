@@ -6,7 +6,7 @@ from typing import Any
 
 import streamlit as st
 
-from src.state import get_dataframe_columns
+from src.state import get_dataframe_columns, reset_uploaded_data_state
 
 
 FREQUENCY_OPTIONS = ["Tahunan", "Bulanan"]
@@ -96,6 +96,8 @@ def render_sidebar(page_options: list[str]) -> dict[str, Any]:
     if uploaded_file is not None:
         st.session_state["uploaded_file"] = uploaded_file
         st.session_state["uploaded_file_name"] = uploaded_file.name
+    elif st.session_state.get("uploaded_file") is not None:
+        reset_uploaded_data_state()
 
     current_page = st.session_state.get("current_page", page_options[0])
     page_index = page_options.index(current_page) if current_page in page_options else 0
