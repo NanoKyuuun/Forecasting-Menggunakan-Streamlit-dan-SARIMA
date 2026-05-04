@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+import pandas as pd
 import streamlit as st
 
 from src.state import has_time_series_data
+from src.workflow import WORKFLOW_STEPS, completed_step_count, get_recommended_page, get_step_status
 
 
 def _safe_len(value: Any) -> int:
@@ -80,7 +82,7 @@ def _render_dataset_summary() -> None:
     if raw_df is None:
         st.info("Belum ada dataset yang diproses. Upload dataset melalui sidebar untuk memulai alur penelitian.")
         if uploaded_file_name:
-            st.caption(f"File sudah dipilih: {uploaded_file_name}. Proses pembacaan data masuk tahap Data Loader.")
+            st.caption(f"File sudah dipilih: {uploaded_file_name}. Buka Data dan Preprocessing untuk membaca dataset.")
         return
 
     st.write(f"Nama file: {uploaded_file_name or '-'}")
@@ -139,12 +141,32 @@ def _render_forecast_snapshot() -> None:
     st.dataframe(forecast_df.head(5), use_container_width=True)
 
 
+def _render_workflow_snapshot() -> None:
+    st.subheader("Status Alur Kerja")
+    completed = completed_step_count(st.session_state)
+    total = len(WORKFLOW_STEPS)
+    st.progress(0 if total == 0 else completed / total)
+    st.info(f"Rekomendasi langkah berikutnya: {get_recommended_page(st.session_state)}")
+
+    rows = [
+        {
+            "Tahap": step.number,
+            "Menu": step.title,
+            "Status": get_step_status(st.session_state, step.page),
+            "Output": step.output,
+        }
+        for step in WORKFLOW_STEPS
+    ]
+    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+
 def render_overview() -> None:
     """Render the research overview page."""
-    st.title("Dashboard Forecasting Tren Minat Jurusan Mahasiswa Baru")
+    st.title("Beranda Dashboard Forecasting PMB")
     st.caption("Aplikasi penelitian berbasis Streamlit dan SARIMA/SARIMAX untuk analisis pendaftaran mahasiswa baru.")
 
     _render_metric_cards()
+    _render_workflow_snapshot()
     _render_methodology_warning()
 
     left_column, right_column = st.columns([1.1, 0.9], gap="large")

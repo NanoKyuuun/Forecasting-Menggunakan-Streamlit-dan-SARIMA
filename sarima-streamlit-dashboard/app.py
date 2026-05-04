@@ -16,39 +16,51 @@ from src.page_registry import PAGE_OPTIONS
 from src.sidebar import render_sidebar
 from src.state import initialize_session_state
 from src.transformation_page import render_transformation_page
+from src.workflow import (
+    PAGE_ANALYSIS,
+    PAGE_BERANDA,
+    PAGE_CONCLUSION,
+    PAGE_DATA,
+    PAGE_EVALUATION,
+    PAGE_FORECASTING,
+    PAGE_MODELING,
+    PAGE_TRANSFORMATION,
+    normalize_page_name,
+)
 
 
 def render_selected_page(page_name: str) -> None:
     """Render the selected dashboard page."""
-    if page_name == "Overview":
+    page_name = normalize_page_name(page_name)
+    if page_name == PAGE_BERANDA:
         render_overview()
         return
 
-    if page_name == "Data & Preprocessing":
+    if page_name == PAGE_DATA:
         render_data_preprocessing_page()
         return
 
-    if page_name == "Data Transformation":
+    if page_name == PAGE_TRANSFORMATION:
         render_transformation_page()
         return
 
-    if page_name == "Analisis Time Series":
+    if page_name == PAGE_ANALYSIS:
         render_analysis_page()
         return
 
-    if page_name == "Pemodelan SARIMA":
+    if page_name == PAGE_MODELING:
         render_modeling_page()
         return
 
-    if page_name == "Evaluasi Model":
+    if page_name == PAGE_EVALUATION:
         render_evaluation_page()
         return
 
-    if page_name == "Forecasting & Interpretasi":
+    if page_name == PAGE_FORECASTING:
         render_forecasting_page()
         return
 
-    if page_name == "Kesimpulan":
+    if page_name == PAGE_CONCLUSION:
         render_conclusion_page()
         return
 

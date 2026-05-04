@@ -11,6 +11,8 @@ import streamlit as st
 from src.forecasting import ForecastingResult, generate_forecast
 from src.interpretation import interpret_forecast
 from src.modeling import ModelingResult
+from src.ui_components import render_not_ready_message, render_page_header, render_recommended_action
+from src.workflow import PAGE_FORECASTING
 
 
 def _format_number(value: Any) -> str:
@@ -37,8 +39,10 @@ def _render_input_state() -> bool:
             st.warning("Evaluasi model belum dijalankan pada sesi ini. Forecast tetap bisa dibuat setelah model valid.")
         return True
 
-    st.info("Time series final dan model valid belum tersedia.")
-    st.write("Selesaikan halaman Data Transformation dan Pemodelan SARIMA terlebih dahulu.")
+    render_not_ready_message(
+        PAGE_FORECASTING,
+        "Selesaikan Transformasi Data dan Pemodelan SARIMA terlebih dahulu agar forecast dapat dibuat.",
+    )
     return False
 
 
@@ -163,7 +167,7 @@ def _render_forecast_table(result: ForecastingResult) -> None:
 
     csv_data = display_df.to_csv(index=False).encode("utf-8-sig")
     st.download_button(
-        "Download Forecast CSV",
+        "Unduh Forecast CSV",
         data=csv_data,
         file_name="forecast_sarima.csv",
         mime="text/csv",
@@ -179,8 +183,10 @@ def _render_automatic_interpretation(result: ForecastingResult) -> None:
 
 def render_forecasting_page() -> None:
     """Render the PRD-08 forecasting page."""
-    st.title("Forecasting & Interpretasi")
-    st.caption("Tahap PRD-08: final model, horizon forecast, confidence interval, tabel, grafik, dan CSV.")
+    render_page_header(
+        PAGE_FORECASTING,
+        "Final model, horizon forecast, confidence interval, tabel, grafik, dan CSV.",
+    )
 
     if not _render_input_state():
         return
@@ -195,3 +201,4 @@ def render_forecasting_page() -> None:
     _render_automatic_interpretation(result)
     _render_forecast_chart(result)
     _render_forecast_table(result)
+    render_recommended_action(PAGE_FORECASTING)

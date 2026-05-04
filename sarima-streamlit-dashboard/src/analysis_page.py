@@ -10,14 +10,18 @@ import streamlit as st
 
 from src.analysis import AdfResult, AnalysisResult, analyze_time_series
 from src.interpretation import interpret_analysis
+from src.ui_components import render_not_ready_message, render_page_header, render_recommended_action
+from src.workflow import PAGE_ANALYSIS
 
 
 def _render_input_state(series: Any) -> bool:
     if series is not None and hasattr(series, "__len__") and len(series) > 0:
         return True
 
-    st.info("Time series final belum tersedia.")
-    st.write("Selesaikan halaman Data Transformation terlebih dahulu sampai `ts_series` berhasil dibuat.")
+    render_not_ready_message(
+        PAGE_ANALYSIS,
+        "Selesaikan Transformasi Data terlebih dahulu sampai time series final berhasil dibuat.",
+    )
     return False
 
 
@@ -222,8 +226,10 @@ def _render_interpretation(result: AnalysisResult) -> None:
 
 def render_analysis_page() -> None:
     """Render the PRD-05 time-series analysis page."""
-    st.title("Analisis Time Series")
-    st.caption("Tahap PRD-05: grafik historis, statistik, rolling, dekomposisi, ADF, ACF, dan PACF.")
+    render_page_header(
+        PAGE_ANALYSIS,
+        "Grafik historis, statistik, rolling, dekomposisi, ADF, ACF, dan PACF.",
+    )
 
     series = st.session_state.get("ts_series")
     if not _render_input_state(series):
@@ -243,3 +249,4 @@ def render_analysis_page() -> None:
 
     _render_decomposition(result)
     _render_acf_pacf(result)
+    render_recommended_action(PAGE_ANALYSIS)

@@ -124,7 +124,7 @@ def transform_to_timeseries(
 
     errors: list[str] = []
     if dataframe is None or dataframe.empty:
-        errors.append("Data bersih belum tersedia. Jalankan Data & Preprocessing terlebih dahulu.")
+        errors.append("Data bersih belum tersedia. Jalankan Data dan Preprocessing terlebih dahulu.")
     if not time_col or time_col not in getattr(dataframe, "columns", []):
         errors.append("Kolom waktu hasil preprocessing tidak ditemukan.")
     if not target_col or target_col not in getattr(dataframe, "columns", []):

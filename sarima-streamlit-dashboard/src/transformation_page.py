@@ -8,6 +8,8 @@ import streamlit as st
 
 from src.interpretation import interpret_transformation
 from src.transformation import TransformationResult, transform_to_timeseries
+from src.ui_components import render_not_ready_message, render_page_header, render_recommended_action
+from src.workflow import PAGE_TRANSFORMATION
 
 
 def _get_selected_columns() -> dict[str, str | None]:
@@ -89,8 +91,10 @@ def _render_input_state(clean_df: Any) -> bool:
     if clean_df is not None:
         return True
 
-    st.info("Data bersih belum tersedia.")
-    st.write("Selesaikan halaman Data & Preprocessing terlebih dahulu sampai `clean_df` berhasil dibuat.")
+    render_not_ready_message(
+        PAGE_TRANSFORMATION,
+        "Selesaikan Data dan Preprocessing terlebih dahulu sampai data bersih berhasil dibuat.",
+    )
     return False
 
 
@@ -141,7 +145,7 @@ def _render_timeseries(result: TransformationResult) -> None:
 
     csv_data = result.time_series_df.to_csv(index=False).encode("utf-8")
     st.download_button(
-        "Download Time Series CSV",
+        "Unduh Time Series CSV",
         data=csv_data,
         file_name="time_series_final.csv",
         mime="text/csv",
@@ -164,8 +168,10 @@ def _render_automatic_interpretation(result: TransformationResult) -> None:
 
 def render_transformation_page() -> None:
     """Render the PRD-04 data-transformation page."""
-    st.title("Data Transformation")
-    st.caption("Tahap PRD-04: agregasi data bersih menjadi time series final.")
+    render_page_header(
+        PAGE_TRANSFORMATION,
+        "Agregasi data bersih menjadi time series final.",
+    )
 
     clean_df = st.session_state.get("clean_df")
     if not _render_input_state(clean_df):
@@ -181,3 +187,4 @@ def render_transformation_page() -> None:
     _render_timeseries(result)
     _render_notes(result)
     _render_automatic_interpretation(result)
+    render_recommended_action(PAGE_TRANSFORMATION)

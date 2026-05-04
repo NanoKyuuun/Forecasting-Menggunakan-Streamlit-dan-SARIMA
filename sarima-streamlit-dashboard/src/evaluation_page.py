@@ -10,6 +10,8 @@ import streamlit as st
 
 from src.evaluation import EvaluationResult, evaluate_model
 from src.interpretation import interpret_evaluation
+from src.ui_components import render_not_ready_message, render_page_header, render_recommended_action
+from src.workflow import PAGE_EVALUATION
 
 
 def _format_number(value: Any) -> str:
@@ -24,8 +26,10 @@ def _render_input_state() -> bool:
     if st.session_state.get("model_fit") is not None and st.session_state.get("test") is not None:
         return True
 
-    st.info("Model dan data testing belum tersedia.")
-    st.write("Selesaikan halaman Pemodelan SARIMA sampai model berhasil dilatih.")
+    render_not_ready_message(
+        PAGE_EVALUATION,
+        "Selesaikan Pemodelan SARIMA terlebih dahulu sampai model dan data testing tersedia.",
+    )
     return False
 
 
@@ -196,8 +200,10 @@ def _render_interpretation(result: EvaluationResult) -> None:
 
 def render_evaluation_page() -> None:
     """Render the PRD-07 evaluation page."""
-    st.title("Evaluasi Model")
-    st.caption("Tahap PRD-07: prediksi data testing, metrik error, residual, ACF residual, dan Ljung-Box.")
+    render_page_header(
+        PAGE_EVALUATION,
+        "Prediksi data testing, metrik error, residual, ACF residual, dan Ljung-Box.",
+    )
 
     if not _render_input_state():
         return
@@ -213,3 +219,4 @@ def render_evaluation_page() -> None:
     _render_prediction_chart(result)
     _render_residual_plots(result)
     _render_residual_diagnostics(result)
+    render_recommended_action(PAGE_EVALUATION)

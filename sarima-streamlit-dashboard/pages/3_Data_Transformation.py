@@ -8,10 +8,11 @@ from src.page_registry import PAGE_OPTIONS
 from src.sidebar import render_sidebar
 from src.state import initialize_session_state
 from src.transformation_page import render_transformation_page
+from src.workflow import PAGE_TRANSFORMATION
 
 
-st.set_page_config(page_title="Data Transformation - Dashboard SARIMA", layout="wide")
+st.set_page_config(page_title="Transformasi Data - Dashboard SARIMA", layout="wide")
 initialize_session_state()
-st.session_state["current_page"] = "Data Transformation"
+st.session_state["current_page"] = PAGE_TRANSFORMATION
 render_sidebar(PAGE_OPTIONS)
 render_transformation_page()

@@ -7,6 +7,8 @@ from typing import Any
 
 import streamlit as st
 
+from src.workflow import PAGE_BERANDA
+
 
 DEFAULT_MODEL_CONFIG: dict[str, Any] = {
     "order": (1, 1, 1),
@@ -60,7 +62,7 @@ DEFAULT_SESSION_STATE: dict[str, Any] = {
     "selected_prodi": "Semua prodi",
     "missing_period_strategy": "Isi 0",
     "forecast_horizon": 3,
-    "current_page": "Overview",
+    "current_page": PAGE_BERANDA,
     "processing_notes": [],
     "model_requested": False,
 }

@@ -8,6 +8,8 @@ import pandas as pd
 import streamlit as st
 
 from src.interpretation import build_conclusion_sections
+from src.ui_components import render_page_header
+from src.workflow import PAGE_CONCLUSION
 
 
 def _safe_len(value: Any) -> int:
@@ -67,8 +69,10 @@ def _render_section(title: str, items: list[str]) -> None:
 
 def render_conclusion_page() -> None:
     """Render PRD-09 conclusion summary."""
-    st.title("Kesimpulan")
-    st.caption("Tahap PRD-09: ringkasan hasil, interpretasi otomatis, keterbatasan, dan saran pengembangan.")
+    render_page_header(
+        PAGE_CONCLUSION,
+        "Ringkasan hasil, interpretasi otomatis, keterbatasan, dan saran pengembangan.",
+    )
 
     _render_metric_cards()
 

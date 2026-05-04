@@ -10,14 +10,18 @@ import streamlit as st
 
 from src.interpretation import interpret_modeling
 from src.modeling import ModelingResult, fit_model
+from src.ui_components import render_not_ready_message, render_page_header, render_recommended_action
+from src.workflow import PAGE_MODELING
 
 
 def _render_input_state(series: Any) -> bool:
     if series is not None and hasattr(series, "__len__") and len(series) > 0:
         return True
 
-    st.info("Time series final belum tersedia.")
-    st.write("Selesaikan halaman Data Transformation terlebih dahulu sampai `ts_series` berhasil dibuat.")
+    render_not_ready_message(
+        PAGE_MODELING,
+        "Selesaikan Transformasi Data terlebih dahulu sampai time series final berhasil dibuat.",
+    )
     return False
 
 
@@ -208,12 +212,15 @@ def _render_result(result: ModelingResult) -> None:
     _render_train_test_tables(result)
     _render_model_summary(result)
     _render_automatic_interpretation(result)
+    render_recommended_action(PAGE_MODELING)
 
 
 def render_modeling_page() -> None:
     """Render the PRD-06 modeling page."""
-    st.title("Pemodelan SARIMA")
-    st.caption("Tahap PRD-06: train-test split, training SARIMAX, AIC, BIC, dan penyimpanan model.")
+    render_page_header(
+        PAGE_MODELING,
+        "Train-test split, training SARIMAX, AIC, BIC, dan penyimpanan model.",
+    )
 
     series = st.session_state.get("ts_series")
     if not _render_input_state(series):

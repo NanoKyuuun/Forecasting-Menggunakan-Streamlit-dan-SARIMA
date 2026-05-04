@@ -22,6 +22,8 @@ from src.preprocessing import (
     preprocess_data,
 )
 from src.state import reset_after_raw_data_change
+from src.ui_components import render_page_header, render_recommended_action
+from src.workflow import PAGE_DATA
 
 
 def _format_file_size(size_bytes: int | None) -> str:
@@ -78,7 +80,7 @@ def _load_uploaded_file_if_needed() -> tuple[Any, bool]:
 
 
 def _render_upload_state() -> None:
-    st.info("Upload dataset melalui sidebar. Format yang didukung: CSV, XLS, dan XLSX.")
+    st.info("Unggah dataset melalui sidebar. Format yang didukung: CSV, XLS, dan XLSX.")
     st.write(
         "Dataset dapat berupa rekap tahunan, rekap bulanan, atau data mentah per pendaftar. "
         "Tahap ini hanya membaca dan menampilkan data mentah tanpa mengubah isi kolom."
@@ -286,8 +288,10 @@ def _render_preprocessing_result(result: PreprocessingResult) -> None:
 
 def render_data_preprocessing_page() -> None:
     """Render raw data loading and preview UI."""
-    st.title("Data & Preprocessing")
-    st.caption("Tahap PRD-03: validasi kolom, missing value, duplikasi, outlier, dan cleaning data.")
+    render_page_header(
+        PAGE_DATA,
+        "Validasi kolom, missing value, duplikasi, outlier, dan cleaning data.",
+    )
 
     dataframe, was_reloaded = _load_uploaded_file_if_needed()
     load_error = st.session_state.get("data_load_error")
@@ -320,3 +324,5 @@ def render_data_preprocessing_page() -> None:
     target_missing_action = _render_preprocessing_controls()
     result = _run_preprocessing(dataframe, target_missing_action)
     _render_preprocessing_result(result)
+    if not result.errors:
+        render_recommended_action(PAGE_DATA)
