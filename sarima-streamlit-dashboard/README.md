@@ -2,6 +2,12 @@
 
 Folder ini berisi implementasi aplikasi dashboard forecasting pendaftaran mahasiswa baru berdasarkan `../PRD.md`.
 
+Dokumentasi lengkap untuk pengguna tersedia di:
+
+```text
+../README.md
+```
+
 ## Menjalankan Aplikasi
 
 Cara paling mudah dari root repo:
@@ -25,4 +31,4 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Tahap saat ini menyelesaikan issue PRD-09: interpretasi otomatis berbahasa Indonesia pada setiap tahap utama dan halaman Kesimpulan untuk ringkasan akademik, keterbatasan, serta saran pengembangan.
+Tahap saat ini sudah mencakup PRD-09, polish UI/UX, dan script setup/run Windows. Tahap berikutnya adalah PRD-10 untuk testing, error handling, README, dan kesiapan demo.
