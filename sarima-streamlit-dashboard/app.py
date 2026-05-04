@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
+from src.analysis_page import render_analysis_page
 from src.data_preprocessing_page import render_data_preprocessing_page
 from src.overview import render_overview
 from src.page_placeholders import render_placeholder_page
@@ -25,6 +26,10 @@ def render_selected_page(page_name: str) -> None:
 
     if page_name == "Data Transformation":
         render_transformation_page()
+        return
+
+    if page_name == "Analisis Time Series":
+        render_analysis_page()
         return
 
     render_placeholder_page(page_name)

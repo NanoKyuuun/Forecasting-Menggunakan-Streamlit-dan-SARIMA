@@ -46,6 +46,21 @@ def _run_transformation(clean_df: Any) -> TransformationResult:
         st.session_state["freq_code"] = result.frequency_code
         st.session_state["data_mode"] = result.data_mode
 
+    analysis_keys = [
+        "analysis_report",
+        "descriptive_stats",
+        "rolling_df",
+        "correlation_df",
+        "adf_result",
+        "train",
+        "test",
+        "model_fit",
+        "metrics",
+        "forecast_df",
+    ]
+    for key in analysis_keys:
+        st.session_state[key] = None
+
     return result
 
 

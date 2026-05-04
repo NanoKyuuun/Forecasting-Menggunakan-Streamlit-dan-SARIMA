@@ -38,6 +38,11 @@ DEFAULT_SESSION_STATE: dict[str, Any] = {
     "dataset_shape": None,
     "preprocessing_report": None,
     "transformation_report": None,
+    "analysis_report": None,
+    "descriptive_stats": None,
+    "rolling_df": None,
+    "correlation_df": None,
+    "adf_result": None,
     "target_missing_action": "Isi 0",
     "column_time": None,
     "column_target": None,
@@ -87,6 +92,11 @@ def reset_after_raw_data_change() -> None:
         "forecast_df",
         "preprocessing_report",
         "transformation_report",
+        "analysis_report",
+        "descriptive_stats",
+        "rolling_df",
+        "correlation_df",
+        "adf_result",
     ]
     for key in keys_to_clear:
         st.session_state[key] = None
