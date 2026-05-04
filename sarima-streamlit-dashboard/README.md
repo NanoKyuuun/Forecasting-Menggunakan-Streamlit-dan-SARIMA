@@ -10,4 +10,4 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Tahap saat ini menyelesaikan issue PRD-08: final model dilatih ulang pada seluruh time series, horizon forecast, confidence interval, tabel/grafik forecast, dan download CSV.
+Tahap saat ini menyelesaikan issue PRD-09: interpretasi otomatis berbahasa Indonesia pada setiap tahap utama dan halaman Kesimpulan untuk ringkasan akademik, keterbatasan, serta saran pengembangan.

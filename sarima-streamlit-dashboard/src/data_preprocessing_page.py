@@ -14,6 +14,7 @@ from src.data_loader import (
     metadata_to_dict,
     summarize_columns,
 )
+from src.interpretation import interpret_preprocessing
 from src.preprocessing import (
     TARGET_MISSING_DROP,
     TARGET_MISSING_FILL_ZERO,
@@ -265,6 +266,12 @@ def _render_clean_data(result: PreprocessingResult) -> None:
             st.write(f"- {note}")
 
 
+def _render_automatic_interpretation(result: PreprocessingResult) -> None:
+    st.subheader("Interpretasi Otomatis")
+    for item in interpret_preprocessing(result):
+        st.write(f"- {item}")
+
+
 def _render_preprocessing_result(result: PreprocessingResult) -> None:
     _render_column_validation(result)
     if _render_preprocessing_errors(result):
@@ -274,6 +281,7 @@ def _render_preprocessing_result(result: PreprocessingResult) -> None:
     _render_duplicates(result)
     _render_outliers(result)
     _render_clean_data(result)
+    _render_automatic_interpretation(result)
 
 
 def render_data_preprocessing_page() -> None:

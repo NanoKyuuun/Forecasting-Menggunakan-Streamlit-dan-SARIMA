@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from src.interpretation import interpret_modeling
 from src.modeling import ModelingResult, fit_model
 
 
@@ -190,6 +191,12 @@ def _render_model_summary(result: ModelingResult) -> None:
             st.write(f"- {note}")
 
 
+def _render_automatic_interpretation(result: ModelingResult) -> None:
+    st.subheader("Interpretasi Otomatis")
+    for item in interpret_modeling(result, st.session_state.get("data_mode", "Tahunan")):
+        st.write(f"- {item}")
+
+
 def _render_result(result: ModelingResult) -> None:
     _render_model_config(result)
     if _render_errors(result):
@@ -200,6 +207,7 @@ def _render_result(result: ModelingResult) -> None:
     _render_train_test_chart(result)
     _render_train_test_tables(result)
     _render_model_summary(result)
+    _render_automatic_interpretation(result)
 
 
 def render_modeling_page() -> None:

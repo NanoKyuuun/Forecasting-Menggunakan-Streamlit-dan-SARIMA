@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.evaluation import EvaluationResult, evaluate_model
+from src.interpretation import interpret_evaluation
 
 
 def _format_number(value: Any) -> str:
@@ -185,13 +186,12 @@ def _render_residual_diagnostics(result: EvaluationResult) -> None:
 
 
 def _render_interpretation(result: EvaluationResult) -> None:
+    st.subheader("Interpretasi Otomatis")
     for warning in result.warnings:
         st.warning(warning)
 
-    st.info(
-        "Metrik dan plot ini dipakai untuk menilai kemampuan model pada data testing. "
-        "Semakin kecil error dan semakin acak residual, semakin baik indikasi performa model."
-    )
+    for item in interpret_evaluation(result):
+        st.write(f"- {item}")
 
 
 def render_evaluation_page() -> None:

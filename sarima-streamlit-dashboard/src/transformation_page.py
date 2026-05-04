@@ -6,6 +6,7 @@ from typing import Any
 
 import streamlit as st
 
+from src.interpretation import interpret_transformation
 from src.transformation import TransformationResult, transform_to_timeseries
 
 
@@ -155,6 +156,12 @@ def _render_notes(result: TransformationResult) -> None:
             st.write(f"- {note}")
 
 
+def _render_automatic_interpretation(result: TransformationResult) -> None:
+    st.subheader("Interpretasi Otomatis")
+    for item in interpret_transformation(result):
+        st.write(f"- {item}")
+
+
 def render_transformation_page() -> None:
     """Render the PRD-04 data-transformation page."""
     st.title("Data Transformation")
@@ -173,3 +180,4 @@ def render_transformation_page() -> None:
     _render_aggregation(result)
     _render_timeseries(result)
     _render_notes(result)
+    _render_automatic_interpretation(result)

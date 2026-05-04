@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.forecasting import ForecastingResult, generate_forecast
+from src.interpretation import interpret_forecast
 from src.modeling import ModelingResult
 
 
@@ -170,11 +171,10 @@ def _render_forecast_table(result: ForecastingResult) -> None:
     )
 
 
-def _render_prd09_boundary() -> None:
-    st.info(
-        "Bagian ini menyelesaikan PRD-08 untuk forecast table, chart, confidence interval, dan CSV. "
-        "Narasi interpretasi otomatis lengkap akan dilanjutkan pada PRD-09."
-    )
+def _render_automatic_interpretation(result: ForecastingResult) -> None:
+    st.subheader("Interpretasi Otomatis")
+    for item in interpret_forecast(result.forecast_df, st.session_state.get("data_mode", "Tahunan")):
+        st.write(f"- {item}")
 
 
 def render_forecasting_page() -> None:
@@ -191,7 +191,7 @@ def render_forecasting_page() -> None:
     if _render_errors(result):
         return
 
-    _render_prd09_boundary()
     _render_forecast_summary(result)
+    _render_automatic_interpretation(result)
     _render_forecast_chart(result)
     _render_forecast_table(result)

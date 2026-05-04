@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.analysis import AdfResult, AnalysisResult, analyze_time_series
+from src.interpretation import interpret_analysis
 
 
 def _render_input_state(series: Any) -> bool:
@@ -207,12 +208,16 @@ def _render_acf_pacf(result: AnalysisResult) -> None:
 
 
 def _render_interpretation(result: AnalysisResult) -> None:
-    st.subheader("Interpretasi Awal")
+    st.subheader("Interpretasi Otomatis")
     for warning in result.warnings:
         st.warning(warning)
 
-    for note in result.notes:
-        st.write(f"- {note}")
+    for item in interpret_analysis(result, st.session_state.get("freq", "Tahunan")):
+        st.write(f"- {item}")
+
+    with st.expander("Catatan teknis analisis"):
+        for note in result.notes:
+            st.write(f"- {note}")
 
 
 def render_analysis_page() -> None:

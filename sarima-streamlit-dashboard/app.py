@@ -5,6 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from src.analysis_page import render_analysis_page
+from src.conclusion_page import render_conclusion_page
 from src.data_preprocessing_page import render_data_preprocessing_page
 from src.evaluation_page import render_evaluation_page
 from src.forecasting_page import render_forecasting_page
@@ -45,6 +46,10 @@ def render_selected_page(page_name: str) -> None:
 
     if page_name == "Forecasting & Interpretasi":
         render_forecasting_page()
+        return
+
+    if page_name == "Kesimpulan":
+        render_conclusion_page()
         return
 
     render_placeholder_page(page_name)
