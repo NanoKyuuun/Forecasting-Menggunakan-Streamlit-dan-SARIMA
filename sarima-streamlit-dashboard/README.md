@@ -10,4 +10,4 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Tahap saat ini menyelesaikan issue PRD-07: evaluasi aktual vs prediksi, MAE/MSE/RMSE/MAPE zero-safe, residual, residual ACF, dan Ljung-Box saat data mencukupi.
+Tahap saat ini menyelesaikan issue PRD-08: final model dilatih ulang pada seluruh time series, horizon forecast, confidence interval, tabel/grafik forecast, dan download CSV.

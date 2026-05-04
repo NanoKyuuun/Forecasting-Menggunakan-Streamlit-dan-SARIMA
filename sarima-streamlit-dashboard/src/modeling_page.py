@@ -51,6 +51,8 @@ def _save_modeling_result(result: ModelingResult) -> None:
         "residual_df",
         "residual_acf_df",
         "ljung_box_df",
+        "forecasting_report",
+        "final_model_fit",
         "forecast_df",
     ]
     for key in downstream_keys:

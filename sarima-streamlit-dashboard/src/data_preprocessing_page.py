@@ -158,6 +158,8 @@ def _run_preprocessing(dataframe: Any, target_missing_action: str) -> Preprocess
         "residual_df",
         "residual_acf_df",
         "ljung_box_df",
+        "forecasting_report",
+        "final_model_fit",
         "forecast_df",
     ]
     for key in downstream_keys:

@@ -7,6 +7,7 @@ import streamlit as st
 from src.analysis_page import render_analysis_page
 from src.data_preprocessing_page import render_data_preprocessing_page
 from src.evaluation_page import render_evaluation_page
+from src.forecasting_page import render_forecasting_page
 from src.modeling_page import render_modeling_page
 from src.overview import render_overview
 from src.page_placeholders import render_placeholder_page
@@ -40,6 +41,10 @@ def render_selected_page(page_name: str) -> None:
 
     if page_name == "Evaluasi Model":
         render_evaluation_page()
+        return
+
+    if page_name == "Forecasting & Interpretasi":
+        render_forecasting_page()
         return
 
     render_placeholder_page(page_name)
