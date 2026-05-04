@@ -10,4 +10,4 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Tahap saat ini menyelesaikan fondasi issue PRD-01: struktur project, sidebar global, session state, dan halaman Overview.
+Tahap saat ini menyelesaikan issue PRD-04: agregasi data bersih, filter prodi, resampling tahunan/bulanan, strategi missing period, dan penyimpanan `ts_series`.

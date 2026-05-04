@@ -1,4 +1,4 @@
-"""Data & Preprocessing page focused on raw data loading for PRD-02."""
+"""Data & Preprocessing page for PRD-02 and PRD-03."""
 
 from __future__ import annotations
 
@@ -13,6 +13,12 @@ from src.data_loader import (
     load_data,
     metadata_to_dict,
     summarize_columns,
+)
+from src.preprocessing import (
+    TARGET_MISSING_DROP,
+    TARGET_MISSING_FILL_ZERO,
+    PreprocessingResult,
+    preprocess_data,
 )
 from src.state import reset_after_raw_data_change
 
@@ -105,10 +111,160 @@ def _render_columns(dataframe: Any, metadata: dict[str, Any]) -> None:
             st.write(f"- `{column}`")
 
 
+def _render_preprocessing_controls() -> str:
+    st.subheader("Validasi dan Cleaning Data")
+    current_action = st.session_state.get("target_missing_action", TARGET_MISSING_FILL_ZERO)
+    options = [TARGET_MISSING_FILL_ZERO, TARGET_MISSING_DROP]
+    index = options.index(current_action) if current_action in options else 0
+    target_missing_action = st.radio(
+        "Tindakan untuk target kosong/tidak numerik",
+        options,
+        index=index,
+        horizontal=True,
+    )
+    st.session_state["target_missing_action"] = target_missing_action
+    return target_missing_action
+
+
+def _run_preprocessing(dataframe: Any, target_missing_action: str) -> PreprocessingResult:
+    result = preprocess_data(
+        dataframe,
+        st.session_state.get("column_time"),
+        st.session_state.get("column_target"),
+        st.session_state.get("column_prodi"),
+        frequency=st.session_state.get("freq", "Tahunan"),
+        target_missing_action=target_missing_action,
+    )
+    st.session_state["preprocessing_report"] = result
+    downstream_keys = [
+        "ts_series",
+        "time_series_df",
+        "aggregated_df",
+        "transformation_report",
+        "train",
+        "test",
+        "model_fit",
+        "metrics",
+        "forecast_df",
+    ]
+    for key in downstream_keys:
+        st.session_state[key] = None
+
+    if result.errors:
+        st.session_state["clean_df"] = None
+        st.session_state["processing_notes"] = []
+    else:
+        st.session_state["clean_df"] = result.clean_df
+        st.session_state["processing_notes"] = result.notes
+
+    return result
+
+
+def _render_column_validation(result: PreprocessingResult) -> None:
+    st.subheader("Validasi Kolom")
+    selected_columns = result.selected_columns
+    rows = [
+        {
+            "Kebutuhan": "Kolom waktu",
+            "Kolom bersih": selected_columns.get("time") or "-",
+            "Status": "Valid" if selected_columns.get("time") else "Belum valid",
+        },
+        {
+            "Kebutuhan": "Kolom target",
+            "Kolom bersih": selected_columns.get("target") or "-",
+            "Status": "Valid" if selected_columns.get("target") else "Belum valid",
+        },
+        {
+            "Kebutuhan": "Kolom prodi/jurusan",
+            "Kolom bersih": selected_columns.get("category") or "-",
+            "Status": "Opsional" if selected_columns.get("category") is None else "Valid",
+        },
+    ]
+    st.dataframe(rows, use_container_width=True, hide_index=True)
+
+    with st.expander("Mapping nama kolom setelah dibersihkan"):
+        mapping_rows = [
+            {"Kolom asli": original, "Kolom bersih": cleaned}
+            for original, cleaned in result.column_map.items()
+        ]
+        st.dataframe(mapping_rows, use_container_width=True, hide_index=True)
+
+
+def _render_preprocessing_errors(result: PreprocessingResult) -> bool:
+    if not result.errors:
+        return False
+
+    for error in result.errors:
+        st.error(error)
+    st.warning("Pilih minimal kolom waktu dan kolom target melalui sidebar sebelum preprocessing dijalankan.")
+    return True
+
+
+def _render_missing_values(result: PreprocessingResult) -> None:
+    st.subheader("Missing Value")
+    st.dataframe(result.missing_summary, use_container_width=True, hide_index=True)
+
+
+def _render_duplicates(result: PreprocessingResult) -> None:
+    st.subheader("Duplikasi")
+    columns = st.columns(4)
+    columns[0].metric("Baris Awal", result.rows_before)
+    columns[1].metric("Duplikasi Penuh", result.full_duplicate_count)
+    columns[2].metric("Duplikasi Periode/Prodi", result.key_duplicate_count)
+    columns[3].metric("Baris Bersih", result.rows_after)
+
+
+def _format_bound(value: float | None) -> str:
+    if value is None:
+        return "-"
+    return f"{value:,.2f}"
+
+
+def _render_outliers(result: PreprocessingResult) -> None:
+    st.subheader("Outlier")
+    bounds = result.outlier_bounds
+    columns = st.columns(5)
+    columns[0].metric("Q1", _format_bound(bounds.q1))
+    columns[1].metric("Q3", _format_bound(bounds.q3))
+    columns[2].metric("IQR", _format_bound(bounds.iqr))
+    columns[3].metric("Batas Bawah", _format_bound(bounds.lower))
+    columns[4].metric("Batas Atas", _format_bound(bounds.upper))
+
+    if result.outlier_df.empty:
+        st.success("Tidak ada outlier target berdasarkan metode IQR.")
+        return
+
+    st.warning(f"{len(result.outlier_df)} baris ditandai sebagai outlier. Outlier tidak dihapus otomatis.")
+    st.dataframe(result.outlier_df, use_container_width=True, hide_index=True)
+
+
+def _render_clean_data(result: PreprocessingResult) -> None:
+    st.subheader("Data Bersih")
+    st.success('Data bersih tersimpan di `st.session_state["clean_df"]`.')
+    st.dataframe(result.clean_df.head(20), use_container_width=True, hide_index=True)
+
+    with st.expander("Catatan proses cleaning"):
+        if not result.notes:
+            st.write("- Tidak ada catatan cleaning.")
+        for note in result.notes:
+            st.write(f"- {note}")
+
+
+def _render_preprocessing_result(result: PreprocessingResult) -> None:
+    _render_column_validation(result)
+    if _render_preprocessing_errors(result):
+        return
+
+    _render_missing_values(result)
+    _render_duplicates(result)
+    _render_outliers(result)
+    _render_clean_data(result)
+
+
 def render_data_preprocessing_page() -> None:
     """Render raw data loading and preview UI."""
     st.title("Data & Preprocessing")
-    st.caption("Tahap PRD-02: load dataset CSV/XLS/XLSX dan preview data mentah.")
+    st.caption("Tahap PRD-03: validasi kolom, missing value, duplikasi, outlier, dan cleaning data.")
 
     dataframe, was_reloaded = _load_uploaded_file_if_needed()
     load_error = st.session_state.get("data_load_error")
@@ -138,6 +294,6 @@ def render_data_preprocessing_page() -> None:
     _render_preview(dataframe)
     _render_columns(dataframe, metadata)
 
-    st.info(
-        "Tahap berikutnya adalah validasi kolom, missing value, duplikasi, outlier, dan cleaning data pada issue PRD-03."
-    )
+    target_missing_action = _render_preprocessing_controls()
+    result = _run_preprocessing(dataframe, target_missing_action)
+    _render_preprocessing_result(result)

@@ -10,6 +10,7 @@ from src.page_placeholders import render_placeholder_page
 from src.page_registry import PAGE_OPTIONS
 from src.sidebar import render_sidebar
 from src.state import initialize_session_state
+from src.transformation_page import render_transformation_page
 
 
 def render_selected_page(page_name: str) -> None:
@@ -20,6 +21,10 @@ def render_selected_page(page_name: str) -> None:
 
     if page_name == "Data & Preprocessing":
         render_data_preprocessing_page()
+        return
+
+    if page_name == "Data Transformation":
+        render_transformation_page()
         return
 
     render_placeholder_page(page_name)

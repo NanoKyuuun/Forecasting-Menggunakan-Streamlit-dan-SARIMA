@@ -28,6 +28,30 @@ def _select_column(label: str, key: str, columns: list[str]) -> str | None:
     return st.session_state[key]
 
 
+def _get_selected_clean_category_column() -> str | None:
+    report = st.session_state.get("preprocessing_report")
+    if report is None or not hasattr(report, "selected_columns"):
+        return None
+
+    return report.selected_columns.get("category")
+
+
+def _get_prodi_options() -> list[str]:
+    values: list[str] = []
+    clean_df = st.session_state.get("clean_df")
+    clean_category_col = _get_selected_clean_category_column()
+    if clean_df is not None and clean_category_col in getattr(clean_df, "columns", []):
+        values = clean_df[clean_category_col].dropna().astype(str).str.strip().tolist()
+    else:
+        raw_df = st.session_state.get("raw_df")
+        raw_category_col = st.session_state.get("column_prodi")
+        if raw_df is not None and raw_category_col in getattr(raw_df, "columns", []):
+            values = raw_df[raw_category_col].dropna().astype(str).str.strip().tolist()
+
+    unique_values = sorted({value for value in values if value})
+    return ["Semua prodi", *unique_values]
+
+
 def _render_manual_parameter_inputs() -> dict[str, Any]:
     st.sidebar.caption("Parameter SARIMA manual")
     col_p, col_d, col_q = st.sidebar.columns(3)
@@ -113,7 +137,16 @@ def render_sidebar(page_options: list[str]) -> dict[str, Any]:
         st.sidebar.selectbox("Pilih Prodi", ["Semua prodi"], disabled=True)
         st.session_state["selected_prodi"] = "Semua prodi"
     else:
-        st.sidebar.selectbox("Pilih Prodi", ["Semua prodi"], key="selected_prodi")
+        prodi_options = _get_prodi_options()
+        selected_prodi = st.session_state.get("selected_prodi", "Semua prodi")
+        selected_index = prodi_options.index(selected_prodi) if selected_prodi in prodi_options else 0
+        selected_prodi = st.sidebar.selectbox(
+            "Pilih Prodi",
+            prodi_options,
+            index=selected_index,
+            key="selected_prodi_select",
+        )
+        st.session_state["selected_prodi"] = selected_prodi
 
     frequency = st.sidebar.selectbox(
         "Pilih Frekuensi Data",
@@ -121,12 +154,13 @@ def render_sidebar(page_options: list[str]) -> dict[str, Any]:
         index=FREQUENCY_OPTIONS.index(st.session_state.get("freq", "Tahunan")),
     )
     st.session_state["freq"] = frequency
+    st.session_state["freq_code"] = "MS" if frequency == "Bulanan" else "YS"
     st.session_state["data_mode"] = frequency
 
     missing_strategy = st.sidebar.selectbox(
         "Strategi Missing Period",
         MISSING_PERIOD_OPTIONS,
-        index=MISSING_PERIOD_OPTIONS.index(st.session_state.get("missing_period_strategy", "Biarkan kosong")),
+        index=MISSING_PERIOD_OPTIONS.index(st.session_state.get("missing_period_strategy", "Isi 0")),
     )
     st.session_state["missing_period_strategy"] = missing_strategy
 
