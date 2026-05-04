@@ -44,7 +44,15 @@ def _save_modeling_result(result: ModelingResult) -> None:
         st.session_state["model_aic"] = result.aic
         st.session_state["model_bic"] = result.bic
 
-    downstream_keys = ["metrics", "forecast_df"]
+    downstream_keys = [
+        "evaluation_report",
+        "metrics",
+        "prediction_df",
+        "residual_df",
+        "residual_acf_df",
+        "ljung_box_df",
+        "forecast_df",
+    ]
     for key in downstream_keys:
         st.session_state[key] = None
 

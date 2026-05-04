@@ -56,9 +56,14 @@ def _run_transformation(clean_df: Any) -> TransformationResult:
         "test",
         "model_fit",
         "modeling_report",
+        "evaluation_report",
         "model_aic",
         "model_bic",
         "metrics",
+        "prediction_df",
+        "residual_df",
+        "residual_acf_df",
+        "ljung_box_df",
         "forecast_df",
     ]
     for key in analysis_keys:

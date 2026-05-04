@@ -10,4 +10,4 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Tahap saat ini menyelesaikan issue PRD-06: train-test split berurutan, training SARIMAX, parameter manual/Auto AIC sederhana, AIC/BIC, dan penyimpanan `model_fit`.
+Tahap saat ini menyelesaikan issue PRD-07: evaluasi aktual vs prediksi, MAE/MSE/RMSE/MAPE zero-safe, residual, residual ACF, dan Ljung-Box saat data mencukupi.
