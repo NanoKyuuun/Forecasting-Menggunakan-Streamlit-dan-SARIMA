@@ -10,4 +10,4 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Tahap saat ini menyelesaikan issue PRD-05: grafik historis, statistik deskriptif, rolling mean/std, dekomposisi bersyarat, ADF Test, ACF, dan PACF.
+Tahap saat ini menyelesaikan issue PRD-06: train-test split berurutan, training SARIMAX, parameter manual/Auto AIC sederhana, AIC/BIC, dan penyimpanan `model_fit`.

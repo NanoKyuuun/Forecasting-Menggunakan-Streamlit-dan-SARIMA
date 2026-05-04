@@ -55,6 +55,9 @@ def _run_transformation(clean_df: Any) -> TransformationResult:
         "train",
         "test",
         "model_fit",
+        "modeling_report",
+        "model_aic",
+        "model_bic",
         "metrics",
         "forecast_df",
     ]

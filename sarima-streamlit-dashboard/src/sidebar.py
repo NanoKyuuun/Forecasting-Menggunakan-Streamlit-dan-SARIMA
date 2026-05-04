@@ -55,11 +55,12 @@ def _get_prodi_options() -> list[str]:
 def _render_manual_parameter_inputs() -> dict[str, Any]:
     st.sidebar.caption("Parameter SARIMA manual")
     col_p, col_d, col_q = st.sidebar.columns(3)
+    frequency = st.session_state.get("freq", "Tahunan")
+    default_q = 1 if frequency == "Bulanan" else 0
     p = col_p.number_input("p", min_value=0, max_value=5, value=1, step=1)
     d = col_d.number_input("d", min_value=0, max_value=2, value=1, step=1)
-    q = col_q.number_input("q", min_value=0, max_value=5, value=1, step=1)
+    q = col_q.number_input("q", min_value=0, max_value=5, value=default_q, step=1)
 
-    frequency = st.session_state.get("freq", "Tahunan")
     default_s = 12 if frequency == "Bulanan" else 0
     seasonal_disabled = frequency == "Tahunan"
 

@@ -149,6 +149,9 @@ def _run_preprocessing(dataframe: Any, target_missing_action: str) -> Preprocess
         "train",
         "test",
         "model_fit",
+        "modeling_report",
+        "model_aic",
+        "model_bic",
         "metrics",
         "forecast_df",
     ]
